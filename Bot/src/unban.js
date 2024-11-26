@@ -23,7 +23,7 @@ export async function handleUnbanCommand(interaction) {
         await interaction.guild.bans.remove(userId, reason);
 
         // Log unban
-        const logChannel = interaction.guild.channels.cache.get('1305290679773040710'); // Replace with your log channel ID
+        const logChannel = interaction.guild.channels.cache.get('1305290679773040710');
         if (logChannel && logChannel.isTextBased()) {
             logChannel.send(
                 `✅ **User Unbanned:** ${bannedUser.user.tag} (${userId})\n**Reason:** ${reason}\n**Unbanned by:** ${interaction.user.tag}`

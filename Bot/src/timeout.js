@@ -37,7 +37,7 @@ export async function handletimeoutCommand(interaction) {
         await member.timeout(duration * 60 * 1000, reason);
 
         // Log the timeout in the specified channel
-        const logChannel = interaction.guild.channels.cache.get('1305290679773040710'); // Replace with your log channel ID
+        const logChannel = interaction.guild.channels.cache.get('1305290679773040710');
         if (logChannel && logChannel.isTextBased()) {
             await logChannel.send(
                 `🚨 **User Timed Out:** ${user.tag} (${user.id})\n**Reason:** ${reason}\n**Duration:** ${duration} minutes\n**Timed out by:** ${interaction.user.tag}`

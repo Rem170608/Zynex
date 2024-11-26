@@ -21,7 +21,7 @@ export async function handleUnlockCommand(interaction) {
     try {
         // Unlock the channel by enabling SendMessages for @everyone
         await channel.permissionOverwrites.edit(everyoneRole, {
-            [PermissionFlagsBits.SendMessages]: true, // Allow Send Messages
+            [PermissionFlagsBits.SendMessages]: true,
         });
 
         console.log(`Channel unlocked: ${channel.name} (${channel.id})`);

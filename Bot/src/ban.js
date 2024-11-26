@@ -19,7 +19,7 @@ export async function handleBanCommand(interaction) {
         await member.ban({ reason });
 
         // Log the ban in the specified channel
-        const logChannel = interaction.guild.channels.cache.get('1305290679773040710'); // Replace with your log channel ID
+        const logChannel = interaction.guild.channels.cache.get('1305290679773040710');
         if (logChannel && logChannel.isTextBased()) {
             await logChannel.send(
                 `🚨 **User Banned:** ${user.tag} (${user.id})\n**Reason:** ${reason}\n**Banned by:** ${interaction.user.tag}`
