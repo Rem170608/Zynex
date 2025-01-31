@@ -1,1 +1,3 @@
-﻿# Discord Bot Zynex
+﻿# Discord Bot Zyne
+
+# Dead
