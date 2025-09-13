@@ -43,8 +43,24 @@
             </section>
 
             <section class="server-details" id="server-details" style="display: none;">
-                <h2>Server Details</h2>
-                <div id="server-info"></div>
+                <h2 id="server-details-title">Server Details</h2>
+                <div class="tabs">
+                    <button class="tab-button active" onclick="dashboard.showTab('info')">Server Info</button>
+                    <button class="tab-button" onclick="dashboard.showTab('config')">Configuration</button>
+                    <button class="tab-button" onclick="dashboard.showTab('messaging')">Send Message</button>
+                </div>
+                
+                <div id="tab-info" class="tab-content">
+                    <div id="server-info"></div>
+                </div>
+                
+                <div id="tab-config" class="tab-content" style="display: none;">
+                    <div id="server-config"></div>
+                </div>
+                
+                <div id="tab-messaging" class="tab-content" style="display: none;">
+                    <div id="server-messaging"></div>
+                </div>
             </section>
         </main>
     </div>

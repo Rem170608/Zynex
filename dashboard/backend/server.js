@@ -3,6 +3,7 @@ import cors from 'cors';
 import { Client, IntentsBitField } from 'discord.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { configManager } from '../../shared/config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,6 +69,9 @@ app.get('/api/bot/guild/:guildId', (req, res) => {
         return res.status(404).json({ error: 'Guild not found' });
     }
 
+    // Get guild configuration
+    const guildConfig = configManager.getGuildConfig(guildId);
+
     res.json({
         id: guild.id,
         name: guild.name,
@@ -86,8 +90,89 @@ app.get('/api/bot/guild/:guildId', (req, res) => {
             name: role.name,
             color: role.hexColor,
             permissions: role.permissions.toArray()
-        }))
+        })),
+        config: guildConfig
     });
+});
+
+// Configuration management endpoints
+app.get('/api/bot/guild/:guildId/config', (req, res) => {
+    const { guildId } = req.params;
+    const guild = apiClient.guilds.cache.get(guildId);
+    
+    if (!guild) {
+        return res.status(404).json({ error: 'Guild not found' });
+    }
+
+    const config = configManager.getGuildConfig(guildId);
+    res.json(config);
+});
+
+app.post('/api/bot/guild/:guildId/config', async (req, res) => {
+    const { guildId } = req.params;
+    const guild = apiClient.guilds.cache.get(guildId);
+    
+    if (!guild) {
+        return res.status(404).json({ error: 'Guild not found' });
+    }
+
+    try {
+        const updatedConfig = await configManager.updateGuildConfig(guildId, req.body);
+        res.json(updatedConfig);
+    } catch (error) {
+        console.error('Error updating config:', error);
+        res.status(500).json({ error: 'Failed to update configuration' });
+    }
+});
+
+app.post('/api/bot/guild/:guildId/config/:section', async (req, res) => {
+    const { guildId, section } = req.params;
+    const guild = apiClient.guilds.cache.get(guildId);
+    
+    if (!guild) {
+        return res.status(404).json({ error: 'Guild not found' });
+    }
+
+    try {
+        const updatedConfig = await configManager.updateNestedConfig(guildId, section, req.body);
+        res.json(updatedConfig);
+    } catch (error) {
+        console.error('Error updating config section:', error);
+        res.status(500).json({ error: 'Failed to update configuration section' });
+    }
+});
+
+// Channel messaging endpoint
+app.post('/api/bot/guild/:guildId/message', async (req, res) => {
+    const { guildId } = req.params;
+    const { channelId, message, embed } = req.body;
+    
+    const guild = apiClient.guilds.cache.get(guildId);
+    if (!guild) {
+        return res.status(404).json({ error: 'Guild not found' });
+    }
+
+    const channel = guild.channels.cache.get(channelId);
+    if (!channel || !channel.isTextBased()) {
+        return res.status(404).json({ error: 'Channel not found or not a text channel' });
+    }
+
+    try {
+        const messageOptions = {};
+        if (message) messageOptions.content = message;
+        if (embed) messageOptions.embeds = [embed];
+
+        const sentMessage = await channel.send(messageOptions);
+        res.json({
+            success: true,
+            messageId: sentMessage.id,
+            channelId: channel.id,
+            channelName: channel.name
+        });
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: 'Failed to send message' });
+    }
 });
 
 // Serve frontend
