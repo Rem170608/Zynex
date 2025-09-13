@@ -61,7 +61,7 @@ app.get('/api/bot/guilds', (req, res) => {
     res.json(guilds);
 });
 
-app.get('/api/bot/guild/:guildId', (req, res) => {
+app.get('/api/bot/guild/:guildId', async (req, res) => {
     const { guildId } = req.params;
     const guild = apiClient.guilds.cache.get(guildId);
     
@@ -70,7 +70,7 @@ app.get('/api/bot/guild/:guildId', (req, res) => {
     }
 
     // Get guild configuration
-    const guildConfig = configManager.getGuildConfig(guildId);
+    const guildConfig = await configManager.getGuildConfig(guildId);
 
     res.json({
         id: guild.id,
@@ -96,7 +96,7 @@ app.get('/api/bot/guild/:guildId', (req, res) => {
 });
 
 // Configuration management endpoints
-app.get('/api/bot/guild/:guildId/config', (req, res) => {
+app.get('/api/bot/guild/:guildId/config', async (req, res) => {
     const { guildId } = req.params;
     const guild = apiClient.guilds.cache.get(guildId);
     
@@ -104,7 +104,7 @@ app.get('/api/bot/guild/:guildId/config', (req, res) => {
         return res.status(404).json({ error: 'Guild not found' });
     }
 
-    const config = configManager.getGuildConfig(guildId);
+    const config = await configManager.getGuildConfig(guildId);
     res.json(config);
 });
 

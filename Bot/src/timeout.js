@@ -15,7 +15,7 @@ export async function handletimeoutCommand(interaction) {
     }
 
     // Get guild configuration
-    const guildConfig = configManager.getGuildConfig(interaction.guild.id);
+    const guildConfig = await configManager.getGuildConfig(interaction.guild.id);
 
     // Check if timeout command is enabled
     if (!guildConfig.moderation.timeoutEnabled) {

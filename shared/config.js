@@ -30,19 +30,19 @@ const DEFAULT_CONFIG = {
 class ConfigManager {
     constructor() {
         this.configs = new Map();
-        this.ensureConfigDir();
-        this.loadConfigs();
+        this.initialized = false;
+        this.initPromise = this.initialize();
     }
 
-    async ensureConfigDir() {
+    async initialize() {
+        if (this.initialized) return;
+        
         try {
             await fs.mkdir(CONFIG_DIR, { recursive: true });
         } catch (error) {
             // Directory might already exist
         }
-    }
 
-    async loadConfigs() {
         try {
             const data = await fs.readFile(CONFIG_FILE, 'utf8');
             const configs = JSON.parse(data);
@@ -52,6 +52,14 @@ class ConfigManager {
             this.configs = new Map();
             await this.saveConfigs();
         }
+        
+        this.initialized = true;
+    }
+
+    async ensureInitialized() {
+        if (!this.initialized) {
+            await this.initPromise;
+        }
     }
 
     async saveConfigs() {
@@ -59,16 +67,17 @@ class ConfigManager {
         await fs.writeFile(CONFIG_FILE, JSON.stringify(configObj, null, 2));
     }
 
-    getGuildConfig(guildId) {
+    async getGuildConfig(guildId) {
+        await this.ensureInitialized();
         if (!this.configs.has(guildId)) {
             this.configs.set(guildId, { ...DEFAULT_CONFIG });
-            this.saveConfigs();
+            await this.saveConfigs();
         }
         return this.configs.get(guildId);
     }
 
     async updateGuildConfig(guildId, updates) {
-        const current = this.getGuildConfig(guildId);
+        const current = await this.getGuildConfig(guildId);
         const updated = { ...current, ...updates };
         this.configs.set(guildId, updated);
         await this.saveConfigs();
@@ -76,7 +85,7 @@ class ConfigManager {
     }
 
     async updateNestedConfig(guildId, section, updates) {
-        const current = this.getGuildConfig(guildId);
+        const current = await this.getGuildConfig(guildId);
         current[section] = { ...current[section], ...updates };
         this.configs.set(guildId, current);
         await this.saveConfigs();

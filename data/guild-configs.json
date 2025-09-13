@@ -1,1 +1,19 @@
-{}
+{
+  "1407064442658881627": {
+    "logChannel": "1414595237891805254",
+    "moderation": {
+      "banEnabled": true,
+      "timeoutEnabled": true,
+      "lockEnabled": true,
+      "logActions": true
+    },
+    "features": {
+      "automod": false,
+      "welcomeMessages": false,
+      "autoRole": false
+    },
+    "welcomeChannel": null,
+    "welcomeMessage": "Welcome to the server, {user}!",
+    "autoRole": null
+  }
+}

@@ -1,9 +1,19 @@
+import { configManager } from '../../shared/config.js';
+
 export async function handleUnbanCommand(interaction) {
     const userId = interaction.options.getString('user_id'); // Use user ID from the command
     const reason = interaction.options.getString('reason') || 'No reason provided.';
 
     if (!interaction.guild) {
         return await interaction.reply({ content: 'This command can only be used in a server.', ephemeral: true });
+    }
+
+    // Get guild configuration
+    const guildConfig = await configManager.getGuildConfig(interaction.guild.id);
+
+    // Check if ban command is enabled
+    if (!guildConfig.moderation.banEnabled) {
+        return await interaction.reply({ content: 'Unban command is disabled in this server.', ephemeral: true });
     }
 
     if (!interaction.member.permissions.has('BanMembers')) {
@@ -22,12 +32,14 @@ export async function handleUnbanCommand(interaction) {
         // Unban the user
         await interaction.guild.bans.remove(userId, reason);
 
-        // Log unban
-        const logChannel = interaction.guild.channels.cache.get('1305290679773040710');
-        if (logChannel && logChannel.isTextBased()) {
-            logChannel.send(
-                `✅ **User Unbanned:** ${bannedUser.user.tag} (${userId})\n**Reason:** ${reason}\n**Unbanned by:** ${interaction.user.tag}`
-            );
+        // Log unban in the configured log channel (if enabled and set)
+        if (guildConfig.moderation.logActions && guildConfig.logChannel) {
+            const logChannel = interaction.guild.channels.cache.get(guildConfig.logChannel);
+            if (logChannel && logChannel.isTextBased()) {
+                await logChannel.send(
+                    `✅ **User Unbanned:** ${bannedUser.user.tag} (${userId})\n**Reason:** ${reason}\n**Unbanned by:** ${interaction.user.tag}\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
+                );
+            }
         }
 
         // Notify command issuer

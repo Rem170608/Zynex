@@ -11,7 +11,7 @@ export async function handleBanCommand(interaction) {
     }
 
     // Get guild configuration
-    const guildConfig = configManager.getGuildConfig(interaction.guild.id);
+    const guildConfig = await configManager.getGuildConfig(interaction.guild.id);
 
     // Check if ban command is enabled
     if (!guildConfig.moderation.banEnabled) {
