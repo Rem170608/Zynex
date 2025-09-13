@@ -15,7 +15,14 @@ const DEFAULT_CONFIG = {
         banEnabled: true,
         timeoutEnabled: true,
         lockEnabled: true,
-        logActions: true
+        kickEnabled: true,
+        warnEnabled: true,
+        clearEnabled: true,
+        slowmodeEnabled: true,
+        logActions: true,
+        autoWarnActions: false,
+        maxWarnings: 3,
+        warnAction: 'timeout' // 'timeout', 'kick', or 'none'
     },
     features: {
         automod: false,

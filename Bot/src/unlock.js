@@ -29,7 +29,7 @@ export async function handleUnlockCommand(interaction) {
     }
 
     // Ensure the user has permission to manage channels
-    if (!interaction.member.permissions.has('ManageChannels')) {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
         return await interaction.reply({ content: 'You do not have permission to manage channels.', ephemeral: true });
     }
 

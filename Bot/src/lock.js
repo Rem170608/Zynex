@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, PermissionsBitField } from 'discord.js';
 import { configManager } from '../../shared/config.js';
 
 export const data = new SlashCommandBuilder()
@@ -28,7 +28,7 @@ export async function handleLockCommand(interaction) {
     }
 
     // Ensure the user has permission to manage channels
-    if (!interaction.member.permissions.has('ManageChannels')) {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
         return await interaction.reply({ content: 'You do not have permission to manage channels.', ephemeral: true });
     }
 

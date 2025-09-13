@@ -162,7 +162,7 @@ class DiscordBotDashboard {
 
         serverConfig.innerHTML = `
             <div class="config-section">
-                <h3>🛡️ Moderation Settings</h3>
+                <h3>🛡️ Moderation Commands</h3>
                 <div class="config-grid">
                     <div class="config-item">
                         <label>Enable Ban Command</label>
@@ -170,9 +170,24 @@ class DiscordBotDashboard {
                              onclick="dashboard.toggleConfig('moderation', 'banEnabled', this)"></div>
                     </div>
                     <div class="config-item">
+                        <label>Enable Kick Command</label>
+                        <div class="config-toggle ${config.moderation.kickEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('moderation', 'kickEnabled', this)"></div>
+                    </div>
+                    <div class="config-item">
                         <label>Enable Timeout Command</label>
                         <div class="config-toggle ${config.moderation.timeoutEnabled ? 'active' : ''}" 
                              onclick="dashboard.toggleConfig('moderation', 'timeoutEnabled', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Enable Warn Command</label>
+                        <div class="config-toggle ${config.moderation.warnEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('moderation', 'warnEnabled', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Enable Clear Command</label>
+                        <div class="config-toggle ${config.moderation.clearEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('moderation', 'clearEnabled', this)"></div>
                     </div>
                     <div class="config-item">
                         <label>Enable Lock Commands</label>
@@ -180,9 +195,38 @@ class DiscordBotDashboard {
                              onclick="dashboard.toggleConfig('moderation', 'lockEnabled', this)"></div>
                     </div>
                     <div class="config-item">
+                        <label>Enable Slowmode Command</label>
+                        <div class="config-toggle ${config.moderation.slowmodeEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('moderation', 'slowmodeEnabled', this)"></div>
+                    </div>
+                    <div class="config-item">
                         <label>Log Moderation Actions</label>
                         <div class="config-toggle ${config.moderation.logActions ? 'active' : ''}" 
                              onclick="dashboard.toggleConfig('moderation', 'logActions', this)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>⚠️ Warning System</h3>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Auto-Actions on Max Warnings</label>
+                        <div class="config-toggle ${config.moderation.autoWarnActions ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('moderation', 'autoWarnActions', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Max Warnings Before Action</label>
+                        <input type="number" class="config-select" value="${config.moderation.maxWarnings || 3}" 
+                               min="1" max="10" onchange="dashboard.updateConfigValue('moderation', 'maxWarnings', parseInt(this.value))">
+                    </div>
+                    <div class="config-item">
+                        <label>Warning Action</label>
+                        <select class="config-select" onchange="dashboard.updateConfigValue('moderation', 'warnAction', this.value)">
+                            <option value="timeout" ${config.moderation.warnAction === 'timeout' ? 'selected' : ''}>Timeout (24h)</option>
+                            <option value="kick" ${config.moderation.warnAction === 'kick' ? 'selected' : ''}>Kick from Server</option>
+                            <option value="none" ${config.moderation.warnAction === 'none' ? 'selected' : ''}>No Action</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -319,6 +363,25 @@ class DiscordBotDashboard {
         } catch (error) {
             console.error('Error updating welcome channel:', error);
             this.showError('Failed to update welcome channel');
+        }
+    }
+
+    async updateConfigValue(section, key, value) {
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/${section}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [key]: value })
+            });
+
+            if (response.ok) {
+                this.currentGuild.config[section][key] = value;
+            } else {
+                throw new Error('Failed to update configuration');
+            }
+        } catch (error) {
+            console.error('Error updating config value:', error);
+            this.showError('Failed to update configuration');
         }
     }
 

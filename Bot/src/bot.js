@@ -1,11 +1,20 @@
 import { Client, IntentsBitField, REST, Routes } from 'discord.js';
 
 // Import Commands
-import { handleBanCommand } from './ban.js'; // Import the ban command handler
-import { handleUnbanCommand } from './unban.js'; // Import the unban command handler
-import { handleLockCommand } from './lock.js'; // Import the lock command handler
-import { handleUnlockCommand } from './unlock.js'; // Import the unlock command handler
+import { handleBanCommand } from './ban.js';
+import { handleUnbanCommand } from './unban.js';
+import { handleLockCommand } from './lock.js';
+import { handleUnlockCommand } from './unlock.js';
 import { handletimeoutCommand } from './timeout.js';
+import { handleKickCommand } from './kick.js';
+import { handleWarnCommand } from './warn.js';
+import { handleClearCommand } from './clear.js';
+import { handleSlowmodeCommand } from './slowmode.js';
+import { handleUserInfoCommand } from './userinfo.js';
+import { handleServerInfoCommand } from './serverinfo.js';
+import { handleInfractionsCommand, handleClearInfractionsCommand } from './infractions.js';
+import { handleAvatarCommand } from './avatar.js';
+import { handleHelpCommand } from './help.js';
 // Use environment variable for Discord bot token
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -115,6 +124,142 @@ const commands = [
             },
         ],
     },
+    {
+        name: 'kick',
+        description: 'Kick a user from the server',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to kick',
+                type: 6, // USER
+                required: true,
+            },
+            {
+                name: 'reason',
+                description: 'Reason for kicking the user',
+                type: 3, // STRING
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'warn',
+        description: 'Warn a user',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to warn',
+                type: 6, // USER
+                required: true,
+            },
+            {
+                name: 'reason',
+                description: 'Reason for the warning',
+                type: 3, // STRING
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'clear',
+        description: 'Delete multiple messages',
+        options: [
+            {
+                name: 'amount',
+                description: 'Number of messages to delete (1-100)',
+                type: 4, // INTEGER
+                required: true,
+            },
+            {
+                name: 'user',
+                description: 'Only delete messages from this user',
+                type: 6, // USER
+                required: false,
+            },
+            {
+                name: 'channel',
+                description: 'Channel to clear messages from',
+                type: 7, // CHANNEL
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'slowmode',
+        description: 'Set slowmode for a channel',
+        options: [
+            {
+                name: 'duration',
+                description: 'Slowmode duration in seconds (0 to disable)',
+                type: 4, // INTEGER
+                required: true,
+            },
+            {
+                name: 'channel',
+                description: 'Channel to apply slowmode to',
+                type: 7, // CHANNEL
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'userinfo',
+        description: 'Get detailed information about a user',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to get information about',
+                type: 6, // USER
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'serverinfo',
+        description: 'Get detailed information about this server',
+        options: [],
+    },
+    {
+        name: 'infractions',
+        description: 'View a user\'s warnings and infractions',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to check infractions for',
+                type: 6, // USER
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'clear-infractions',
+        description: 'Clear all warnings for a user',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to clear warnings for',
+                type: 6, // USER
+                required: true,
+            },
+        ],
+    },
+    {
+        name: 'avatar',
+        description: 'Display a user\'s avatar',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to show avatar for',
+                type: 6, // USER
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'help',
+        description: 'Show all available commands and help information',
+        options: [],
+    },
 ];
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -150,6 +295,26 @@ client.on('interactionCreate', async (interaction) => {
         await handleUnlockCommand(interaction);
     } else if (interaction.commandName === 'timeout') {
         await handletimeoutCommand(interaction);
+    } else if (interaction.commandName === 'kick') {
+        await handleKickCommand(interaction);
+    } else if (interaction.commandName === 'warn') {
+        await handleWarnCommand(interaction);
+    } else if (interaction.commandName === 'clear') {
+        await handleClearCommand(interaction);
+    } else if (interaction.commandName === 'slowmode') {
+        await handleSlowmodeCommand(interaction);
+    } else if (interaction.commandName === 'userinfo') {
+        await handleUserInfoCommand(interaction);
+    } else if (interaction.commandName === 'serverinfo') {
+        await handleServerInfoCommand(interaction);
+    } else if (interaction.commandName === 'infractions') {
+        await handleInfractionsCommand(interaction);
+    } else if (interaction.commandName === 'clear-infractions') {
+        await handleClearInfractionsCommand(interaction);
+    } else if (interaction.commandName === 'avatar') {
+        await handleAvatarCommand(interaction);
+    } else if (interaction.commandName === 'help') {
+        await handleHelpCommand(interaction);
     }
 });
 

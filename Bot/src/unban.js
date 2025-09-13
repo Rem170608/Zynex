@@ -1,3 +1,4 @@
+import { PermissionsBitField } from 'discord.js';
 import { configManager } from '../../shared/config.js';
 
 export async function handleUnbanCommand(interaction) {
@@ -16,7 +17,7 @@ export async function handleUnbanCommand(interaction) {
         return await interaction.reply({ content: 'Unban command is disabled in this server.', ephemeral: true });
     }
 
-    if (!interaction.member.permissions.has('BanMembers')) {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {
         return await interaction.reply({ content: 'You do not have permission to unban members.', ephemeral: true });
     }
 

@@ -1,4 +1,5 @@
 // ban.js
+import { PermissionsBitField } from 'discord.js';
 import { configManager } from '../../shared/config.js';
 
 export async function handleBanCommand(interaction) {
@@ -19,7 +20,7 @@ export async function handleBanCommand(interaction) {
     }
 
     // Ensure the user has permission to ban members
-    if (!interaction.member.permissions.has('BanMembers')) {
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {
         return await interaction.reply({ content: 'You do not have permission to ban members.', ephemeral: true });
     }
 
