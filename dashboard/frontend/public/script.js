@@ -200,6 +200,16 @@ class DiscordBotDashboard {
                              onclick="dashboard.toggleConfig('moderation', 'slowmodeEnabled', this)"></div>
                     </div>
                     <div class="config-item">
+                        <label>Enable Role Commands</label>
+                        <div class="config-toggle ${config.moderation.roleEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('moderation', 'roleEnabled', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Enable Set Nickname Command</label>
+                        <div class="config-toggle ${config.moderation.setNickEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('moderation', 'setNickEnabled', this)"></div>
+                    </div>
+                    <div class="config-item">
                         <label>Log Moderation Actions</label>
                         <div class="config-toggle ${config.moderation.logActions ? 'active' : ''}" 
                              onclick="dashboard.toggleConfig('moderation', 'logActions', this)"></div>
@@ -249,30 +259,134 @@ class DiscordBotDashboard {
             </div>
 
             <div class="config-section">
-                <h3>🎉 Welcome Settings</h3>
+                <h3>⭐ Leveling System</h3>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Enable Leveling System</label>
+                        <div class="config-toggle ${config.features.leveling ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('features', 'leveling', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Level Announcements Channel</label>
+                        <select class="config-select" onchange="dashboard.updateLevelingChannel(this.value)">
+                            <option value="">Select a channel...</option>
+                            ${guild.channels.map(channel => `
+                                <option value="${channel.id}" ${config.leveling?.announceChannel === channel.id ? 'selected' : ''}>
+                                    # ${this.escapeHtml(channel.name)}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label>XP Multiplier</label>
+                        <input type="number" class="config-select" value="${config.leveling?.multiplier || 1}" 
+                               min="0.1" max="5" step="0.1" onchange="dashboard.updateLevelingMultiplier(parseFloat(this.value))">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>🛡️ Auto-Moderation</h3>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Enable Auto-Moderation</label>
+                        <div class="config-toggle ${config.features.automod ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('features', 'automod', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Anti-Spam Detection</label>
+                        <div class="config-toggle ${config.automod?.antiSpam ? 'active' : ''}" 
+                             onclick="dashboard.toggleAutomod('antiSpam', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Block Discord Invites</label>
+                        <div class="config-toggle ${config.automod?.antiInvite ? 'active' : ''}" 
+                             onclick="dashboard.toggleAutomod('antiInvite', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Block External Links</label>
+                        <div class="config-toggle ${config.automod?.antiLink ? 'active' : ''}" 
+                             onclick="dashboard.toggleAutomod('antiLink', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Bad Words Filter</label>
+                        <div class="config-toggle ${config.automod?.badWords ? 'active' : ''}" 
+                             onclick="dashboard.toggleAutomod('badWords', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Auto-Mod Action</label>
+                        <select class="config-select" onchange="dashboard.updateAutomodAction(this.value)">
+                            <option value="delete" ${config.automod?.action === 'delete' ? 'selected' : ''}>Delete Message</option>
+                            <option value="timeout" ${config.automod?.action === 'timeout' ? 'selected' : ''}>Timeout User</option>
+                            <option value="warn" ${config.automod?.action === 'warn' ? 'selected' : ''}>Issue Warning</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>👋 Welcome Messages</h3>
                 <div class="config-grid">
                     <div class="config-item">
                         <label>Enable Welcome Messages</label>
-                        <div class="config-toggle ${config.features.welcomeMessages ? 'active' : ''}" 
-                             onclick="dashboard.toggleConfig('features', 'welcomeMessages', this)"></div>
+                        <div class="config-toggle ${config.features.welcome ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('features', 'welcome', this)"></div>
                     </div>
                     <div class="config-item">
                         <label>Welcome Channel</label>
                         <select class="config-select" onchange="dashboard.updateWelcomeChannel(this.value)">
                             <option value="">Select a channel...</option>
                             ${guild.channels.map(channel => `
-                                <option value="${channel.id}" ${config.welcomeChannel === channel.id ? 'selected' : ''}>
+                                <option value="${channel.id}" ${config.welcome?.channelId === channel.id ? 'selected' : ''}>
                                     # ${this.escapeHtml(channel.name)}
                                 </option>
                             `).join('')}
                         </select>
                     </div>
+                    <div class="config-item">
+                        <label>Use Embed for Welcome</label>
+                        <div class="config-toggle ${config.welcome?.embedEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleWelcome('embedEnabled', this)"></div>
+                    </div>
                 </div>
                 <div style="margin-top: 15px;">
-                    <label>Welcome Message</label>
-                    <textarea placeholder="Welcome message... Use {user} to mention the user" 
+                    <label>Welcome Message (Use {user}, {server}, {membercount})</label>
+                    <textarea placeholder="Welcome {user} to {server}!" 
                               onchange="dashboard.updateWelcomeMessage(this.value)"
-                              style="width: 100%; margin-top: 5px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">${config.welcomeMessage || ''}</textarea>
+                              style="width: 100%; margin-top: 5px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">${config.welcome?.message || 'Welcome {user} to {server}!'}</textarea>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>👋 Goodbye Messages</h3>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Enable Goodbye Messages</label>
+                        <div class="config-toggle ${config.features.goodbye ? 'active' : ''}" 
+                             onclick="dashboard.toggleConfig('features', 'goodbye', this)"></div>
+                    </div>
+                    <div class="config-item">
+                        <label>Goodbye Channel</label>
+                        <select class="config-select" onchange="dashboard.updateGoodbyeChannel(this.value)">
+                            <option value="">Select a channel...</option>
+                            ${guild.channels.map(channel => `
+                                <option value="${channel.id}" ${config.goodbye?.channelId === channel.id ? 'selected' : ''}>
+                                    # ${this.escapeHtml(channel.name)}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label>Use Embed for Goodbye</label>
+                        <div class="config-toggle ${config.goodbye?.embedEnabled ? 'active' : ''}" 
+                             onclick="dashboard.toggleGoodbye('embedEnabled', this)"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Goodbye Message (Use {user}, {server}, {membercount})</label>
+                    <textarea placeholder="{user} has left {server}. Goodbye!" 
+                              onchange="dashboard.updateGoodbyeMessage(this.value)"
+                              style="width: 100%; margin-top: 5px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">${config.goodbye?.message || '{user} has left {server}. Goodbye!'}</textarea>
                 </div>
             </div>
         `;
@@ -450,6 +564,189 @@ class DiscordBotDashboard {
     showError(message) {
         const serversGrid = document.getElementById('servers-grid');
         serversGrid.innerHTML = `<div class="error">${message}</div>`;
+    }
+
+    showSuccess(message) {
+        // Add a temporary success message (optional enhancement)
+        console.log('Success:', message);
+    }
+
+    // New methods for extended features
+    async toggleAutomod(setting, element) {
+        const isActive = element.classList.contains('active');
+        const newValue = !isActive;
+
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/automod`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [setting]: newValue })
+            });
+
+            if (response.ok) {
+                element.classList.toggle('active');
+                if (!this.currentGuild.config.automod) this.currentGuild.config.automod = {};
+                this.currentGuild.config.automod[setting] = newValue;
+            } else {
+                throw new Error('Failed to update auto-moderation setting');
+            }
+        } catch (error) {
+            console.error('Error updating automod:', error);
+            this.showError('Failed to update auto-moderation setting');
+        }
+    }
+
+    async updateAutomodAction(action) {
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/automod`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action })
+            });
+
+            if (response.ok) {
+                if (!this.currentGuild.config.automod) this.currentGuild.config.automod = {};
+                this.currentGuild.config.automod.action = action;
+                this.showSuccess('Auto-moderation action updated successfully');
+            } else {
+                throw new Error('Failed to update auto-mod action');
+            }
+        } catch (error) {
+            console.error('Error updating automod action:', error);
+            this.showError('Failed to update auto-moderation action');
+        }
+    }
+
+    async updateLevelingChannel(channelId) {
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/leveling`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ announceChannel: channelId })
+            });
+
+            if (response.ok) {
+                if (!this.currentGuild.config.leveling) this.currentGuild.config.leveling = {};
+                this.currentGuild.config.leveling.announceChannel = channelId;
+                this.showSuccess('Leveling announcement channel updated successfully');
+            } else {
+                throw new Error('Failed to update leveling channel');
+            }
+        } catch (error) {
+            console.error('Error updating leveling channel:', error);
+            this.showError('Failed to update leveling channel');
+        }
+    }
+
+    async updateLevelingMultiplier(multiplier) {
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/leveling`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ multiplier: multiplier })
+            });
+
+            if (response.ok) {
+                if (!this.currentGuild.config.leveling) this.currentGuild.config.leveling = {};
+                this.currentGuild.config.leveling.multiplier = multiplier;
+                this.showSuccess('XP multiplier updated successfully');
+            } else {
+                throw new Error('Failed to update XP multiplier');
+            }
+        } catch (error) {
+            console.error('Error updating XP multiplier:', error);
+            this.showError('Failed to update XP multiplier');
+        }
+    }
+
+    async toggleWelcome(setting, element) {
+        const isActive = element.classList.contains('active');
+        const newValue = !isActive;
+
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/welcome`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [setting]: newValue })
+            });
+
+            if (response.ok) {
+                element.classList.toggle('active');
+                if (!this.currentGuild.config.welcome) this.currentGuild.config.welcome = {};
+                this.currentGuild.config.welcome[setting] = newValue;
+            } else {
+                throw new Error('Failed to update welcome setting');
+            }
+        } catch (error) {
+            console.error('Error updating welcome setting:', error);
+            this.showError('Failed to update welcome setting');
+        }
+    }
+
+    async toggleGoodbye(setting, element) {
+        const isActive = element.classList.contains('active');
+        const newValue = !isActive;
+
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/goodbye`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [setting]: newValue })
+            });
+
+            if (response.ok) {
+                element.classList.toggle('active');
+                if (!this.currentGuild.config.goodbye) this.currentGuild.config.goodbye = {};
+                this.currentGuild.config.goodbye[setting] = newValue;
+            } else {
+                throw new Error('Failed to update goodbye setting');
+            }
+        } catch (error) {
+            console.error('Error updating goodbye setting:', error);
+            this.showError('Failed to update goodbye setting');
+        }
+    }
+
+    async updateGoodbyeChannel(channelId) {
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/goodbye`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ channelId: channelId })
+            });
+
+            if (response.ok) {
+                if (!this.currentGuild.config.goodbye) this.currentGuild.config.goodbye = {};
+                this.currentGuild.config.goodbye.channelId = channelId;
+                this.showSuccess('Goodbye channel updated successfully');
+            } else {
+                throw new Error('Failed to update goodbye channel');
+            }
+        } catch (error) {
+            console.error('Error updating goodbye channel:', error);
+            this.showError('Failed to update goodbye channel');
+        }
+    }
+
+    async updateGoodbyeMessage(message) {
+        try {
+            const response = await fetch(`${this.apiBase}/api/bot/guild/${this.currentGuild.id}/config/goodbye`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+
+            if (response.ok) {
+                if (!this.currentGuild.config.goodbye) this.currentGuild.config.goodbye = {};
+                this.currentGuild.config.goodbye.message = message;
+                this.showSuccess('Goodbye message updated successfully');
+            } else {
+                throw new Error('Failed to update goodbye message');
+            }
+        } catch (error) {
+            console.error('Error updating goodbye message:', error);
+            this.showError('Failed to update goodbye message');
+        }
     }
 
     escapeHtml(text) {
