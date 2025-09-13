@@ -1,3 +1,3 @@
 ﻿# Discord Bot Zyne
 
-# Dead
+# THis is 100% vibecoded :D
