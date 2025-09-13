@@ -9,10 +9,10 @@
     },
     "features": {
       "automod": false,
-      "welcomeMessages": false,
+      "welcomeMessages": true,
       "autoRole": false
     },
-    "welcomeChannel": null,
+    "welcomeChannel": "1407068933378281535",
     "welcomeMessage": "Welcome to the server, {user}!",
     "autoRole": null
   }
