@@ -15,15 +15,24 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Discord Bot"
+args = "Discord Bot Dashboard"
 
 [[workflows.workflow]]
-name = "Discord Bot"
+name = "Discord Bot Dashboard"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node Bot/src/bot.js"
+args = "node start.js"
+waitForPort = 5000
 
 [workflows.workflow.metadata]
-outputType = "console"
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 42905
+externalPort = 3000

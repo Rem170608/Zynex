@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Discord Bot Dashboard</h1>
+            <div id="bot-status" class="status-card">
+                <div class="status-indicator" id="status-dot"></div>
+                <span id="status-text">Loading...</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="bot-info">
+                <h2>Bot Information</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Bot Name</h3>
+                        <p id="bot-name">Loading...</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Bot ID</h3>
+                        <p id="bot-id">Loading...</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Total Servers</h3>
+                        <p id="guild-count">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="servers-section">
+                <h2>Servers</h2>
+                <div class="servers-grid" id="servers-grid">
+                    <div class="loading">Loading servers...</div>
+                </div>
+            </section>
+
+            <section class="server-details" id="server-details" style="display: none;">
+                <h2>Server Details</h2>
+                <div id="server-info"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
