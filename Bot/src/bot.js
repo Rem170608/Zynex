@@ -15,6 +15,13 @@ import { handleServerInfoCommand } from './serverinfo.js';
 import { handleInfractionsCommand, handleClearInfractionsCommand } from './infractions.js';
 import { handleAvatarCommand } from './avatar.js';
 import { handleHelpCommand } from './help.js';
+import { handleAddRoleCommand } from './addrole.js';
+import { handleRemoveRoleCommand } from './removerole.js';
+import { handleSetNickCommand } from './setnick.js';
+import { handleRankCommand, handleLeaderboardCommand, addXP } from './leveling.js';
+import { checkAutoMod } from './automod.js';
+import { handleMemberJoin, handleMemberLeave } from './welcome.js';
+import { configManager } from '../../shared/config.js';
 // Use environment variable for Discord bot token
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -260,6 +267,77 @@ const commands = [
         description: 'Show all available commands and help information',
         options: [],
     },
+    {
+        name: 'addrole',
+        description: 'Add a role to a user',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to add the role to',
+                type: 6, // USER
+                required: true,
+            },
+            {
+                name: 'role',
+                description: 'The role to add',
+                type: 8, // ROLE
+                required: true,
+            },
+        ],
+    },
+    {
+        name: 'removerole',
+        description: 'Remove a role from a user',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to remove the role from',
+                type: 6, // USER
+                required: true,
+            },
+            {
+                name: 'role',
+                description: 'The role to remove',
+                type: 8, // ROLE
+                required: true,
+            },
+        ],
+    },
+    {
+        name: 'setnick',
+        description: 'Set or reset a user\'s nickname',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to change nickname for',
+                type: 6, // USER
+                required: true,
+            },
+            {
+                name: 'nickname',
+                description: 'The new nickname (leave empty to reset)',
+                type: 3, // STRING
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'rank',
+        description: 'Show your or another user\'s level and XP',
+        options: [
+            {
+                name: 'user',
+                description: 'The user to check rank for',
+                type: 6, // USER
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'leaderboard',
+        description: 'Show the server XP leaderboard',
+        options: [],
+    },
 ];
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -315,8 +393,58 @@ client.on('interactionCreate', async (interaction) => {
         await handleAvatarCommand(interaction);
     } else if (interaction.commandName === 'help') {
         await handleHelpCommand(interaction);
+    } else if (interaction.commandName === 'addrole') {
+        await handleAddRoleCommand(interaction);
+    } else if (interaction.commandName === 'removerole') {
+        await handleRemoveRoleCommand(interaction);
+    } else if (interaction.commandName === 'setnick') {
+        await handleSetNickCommand(interaction);
+    } else if (interaction.commandName === 'rank') {
+        await handleRankCommand(interaction);
+    } else if (interaction.commandName === 'leaderboard') {
+        await handleLeaderboardCommand(interaction);
     }
 });
 
+// Message event for leveling and auto-moderation
+client.on('messageCreate', async (message) => {
+    if (!message.guild || message.author.bot) return;
+    
+    try {
+        const guildConfig = await configManager.getGuildConfig(message.guild.id);
+        
+        // Auto-moderation check
+        if (guildConfig.features.automod) {
+            await checkAutoMod(message, guildConfig);
+        }
+        
+        // Leveling system
+        if (guildConfig.features.leveling) {
+            await addXP(message, guildConfig);
+        }
+    } catch (error) {
+        console.error('Message processing error:', error);
+    }
+});
+
+// Member join event
+client.on('guildMemberAdd', async (member) => {
+    try {
+        const guildConfig = await configManager.getGuildConfig(member.guild.id);
+        await handleMemberJoin(member, guildConfig);
+    } catch (error) {
+        console.error('Member join error:', error);
+    }
+});
+
+// Member leave event
+client.on('guildMemberRemove', async (member) => {
+    try {
+        const guildConfig = await configManager.getGuildConfig(member.guild.id);
+        await handleMemberLeave(member, guildConfig);
+    } catch (error) {
+        console.error('Member leave error:', error);
+    }
+});
 
 client.login(TOKEN);

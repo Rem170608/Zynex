@@ -19,15 +19,58 @@ const DEFAULT_CONFIG = {
         warnEnabled: true,
         clearEnabled: true,
         slowmodeEnabled: true,
+        roleEnabled: true,
+        setNickEnabled: true,
         logActions: true,
         autoWarnActions: false,
         maxWarnings: 3,
         warnAction: 'timeout' // 'timeout', 'kick', or 'none'
     },
+    warnings: {},
     features: {
-        automod: false,
-        welcomeMessages: false,
-        autoRole: false
+        moderation: true,
+        leveling: false,
+        welcome: false,
+        goodbye: false,
+        automod: false
+    },
+    leveling: {
+        users: {},
+        multiplier: 1,
+        excludedChannels: [],
+        excludedRoles: [],
+        roleRewards: {},
+        announceChannel: null
+    },
+    welcome: {
+        enabled: false,
+        channelId: null,
+        message: 'Welcome {user} to {server}!',
+        embedEnabled: false,
+        embedTitle: '👋 Welcome!',
+        embedColor: '#00FF00',
+        embedImage: null,
+        autoRole: null,
+        dmEnabled: false,
+        dmMessage: 'Welcome to {server}!'
+    },
+    goodbye: {
+        enabled: false,
+        channelId: null,
+        message: '{user} has left {server}. Goodbye!',
+        embedEnabled: false,
+        embedTitle: '👋 Goodbye!',
+        embedColor: '#FF0000',
+        embedImage: null
+    },
+    automod: {
+        antiSpam: false,
+        badWords: false,
+        badWordsList: [],
+        antiInvite: false,
+        antiLink: false,
+        action: 'delete', // 'delete', 'timeout', 'warn'
+        sendWarning: false
     },
     welcomeChannel: null,
     welcomeMessage: "Welcome to the server, {user}!",
