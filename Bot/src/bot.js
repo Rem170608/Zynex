@@ -5,10 +5,9 @@ import { handleBanCommand } from './ban.js'; // Import the ban command handler
 import { handleUnbanCommand } from './unban.js'; // Import the unban command handler
 import { handleLockCommand } from './lock.js'; // Import the lock command handler
 import { handleUnlockCommand } from './unlock.js'; // Import the unlock command handler
-import { describe } from 'node:test';
-import { type } from 'node:os';
 import { handletimeoutCommand } from './timeout.js';
-import { TOKEN } from './Token.js';
+// Use environment variable for Discord bot token
+const TOKEN = process.env.DISCORD_TOKEN;
 
 
 const client = new Client({
