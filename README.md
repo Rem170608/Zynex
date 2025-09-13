@@ -1,3 +1,4 @@
 ﻿# Discord Bot Zyne
 
-# THis is 100% vibecoded :D
+# This is 100% vibecoded :D
+
