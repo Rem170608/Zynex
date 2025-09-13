@@ -9,6 +9,13 @@ import { handletimeoutCommand } from './timeout.js';
 // Use environment variable for Discord bot token
 const TOKEN = process.env.DISCORD_TOKEN;
 
+// Check if Discord token is provided
+if (!TOKEN) {
+    console.error('❌ DISCORD_TOKEN environment variable is required but not found!');
+    console.error('Please add your Discord bot token to the environment variables.');
+    process.exit(1);
+}
+
 
 const client = new Client({
     intents: [
@@ -131,7 +138,7 @@ client.on('ready', (c) => {
 
 // Handle interactions
 client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === 'ban') {
         await handleBanCommand(interaction);
