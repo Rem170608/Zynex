@@ -15,5 +15,29 @@
     "welcomeChannel": "1407068933378281535",
     "welcomeMessage": "Welcome to the server, {user}!",
     "autoRole": null
+  },
+  "1165593287596449792": {
+    "logChannel": null,
+    "moderation": {
+      "banEnabled": true,
+      "timeoutEnabled": true,
+      "lockEnabled": true,
+      "kickEnabled": true,
+      "warnEnabled": true,
+      "clearEnabled": true,
+      "slowmodeEnabled": true,
+      "logActions": true,
+      "autoWarnActions": false,
+      "maxWarnings": 3,
+      "warnAction": "timeout"
+    },
+    "features": {
+      "automod": false,
+      "welcomeMessages": false,
+      "autoRole": false
+    },
+    "welcomeChannel": null,
+    "welcomeMessage": "Welcome to the server, {user}!",
+    "autoRole": null
   }
 }
