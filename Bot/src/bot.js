@@ -22,7 +22,6 @@ import { handleRankCommand, handleLeaderboardCommand, addXP } from './leveling.j
 import { checkAutoMod } from './automod.js';
 import { handleMemberJoin, handleMemberLeave } from './welcome.js';
 import { configManager } from '../../shared/config.js';
-import { handleLeaveGuildCommand } from './leaveguild.js';
 // Use environment variable for Discord bot token
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -339,18 +338,6 @@ const commands = [
         description: 'Show the server XP leaderboard',
         options: [],
     },
-    {
-    name: 'leaveguild',
-    description: 'Make the bot leave a server by guild ID',
-    options: [
-        {
-            name: 'guild_id',
-            description: 'The ID of the guild to leave',
-            type: 3, // STRING
-            required: true,
-        },
-    ],
-    },
 ];
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -416,10 +403,6 @@ client.on('interactionCreate', async (interaction) => {
         await handleRankCommand(interaction);
     } else if (interaction.commandName === 'leaderboard') {
         await handleLeaderboardCommand(interaction);
-    } else if (interaction.commandName === 'leaderboard') {
-        await handleLeaderboardCommand(interaction);
-    } else if (interaction.commandName === 'leaveguild') {
-        await handleLeaveGuildCommand(interaction);
     }
 });
 
